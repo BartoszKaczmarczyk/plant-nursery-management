@@ -18,8 +18,8 @@ public class PlantController {
     PlantServiceImplementation plantServiceImplementation;
 
     @GetMapping("/{id}")
-        public ResponseEntity<Plant> getPlant(@PathVariable Long id) {
-            return new ResponseEntity<>(plantServiceImplementation.getPlant(id), HttpStatus.OK);
+    public ResponseEntity<Plant> getPlant(@PathVariable Long id) {
+        return new ResponseEntity<>(plantServiceImplementation.getPlant(id), HttpStatus.OK);
     }
 
     @PostMapping
@@ -38,5 +38,11 @@ public class PlantController {
         return new ResponseEntity<>(plantServiceImplementation.getPlants(), HttpStatus.OK);
     }
 
-
+    @PutMapping("/{id}")
+    public ResponseEntity<Plant> sellPlant(@PathVariable Long id, @RequestBody int quantity) {
+        Plant plant = plantServiceImplementation.getPlant(id);
+        if (plantServiceImplementation.sellPlant(plant, quantity)) {
+            return new ResponseEntity<>(plant, HttpStatus.OK);
+        } return new ResponseEntity<>(plant, HttpStatus.NOT_ACCEPTABLE);
+    }
 }

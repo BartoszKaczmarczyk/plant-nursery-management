@@ -10,5 +10,5 @@ public interface PlantService {
     Plant savePlant(Plant plant);
     void deletePlant(Long id);
     List<Plant> getPlants();
-//    Set<Supply> getSupplies(Long id);
+    boolean sellPlant(Plant plant, int quantity);
 }

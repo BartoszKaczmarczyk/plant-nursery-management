@@ -6,12 +6,8 @@ import java.util.List;
 
 public interface SupplyService {
 
-    Supply getSupply(Long plantId, Long supplierId);
+    Supply getSupply(Long id);
     Supply saveSupply(Supply supply, Long plantId, Long supplierId);
-    void deleteSupply(Long id);
+    boolean deleteSupply(Supply supply);
     List<Supply> getAllSupplies();
-//    Supply updateSupply(String quantity, Long plantId, Long supplierId);
-//    List<Supply> getPlantSupplies(Long plantId);
-//    List<Supply> getSupplierSupplies(Long supplierId);
-
 }

@@ -3,6 +3,7 @@ package pl.bartoszkaczmarczyk.plantnurserymanagement.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.bartoszkaczmarczyk.plantnurserymanagement.entity.Plant;
+import pl.bartoszkaczmarczyk.plantnurserymanagement.exception.EntityNotFoundException;
 import pl.bartoszkaczmarczyk.plantnurserymanagement.repository.PlantRepository;
 
 import java.util.List;
@@ -16,13 +17,12 @@ public class PlantServiceImplementation implements PlantService {
 
     @Override
     public Plant getPlant(Long id) {
-        Optional <Plant> plant = plantRepository.findById(id);
-        try {
+        Optional<Plant> plant = plantRepository.findById(id);
+        if (plant.isPresent()) {
             return plant.get();
-        } catch (Exception e) {
-            System.out.println("Plant not found");
+        } else {
+            throw new EntityNotFoundException(Plant.class, id);
         }
-        return null;
     }
 
     @Override
@@ -32,15 +32,30 @@ public class PlantServiceImplementation implements PlantService {
 
     @Override
     public void deletePlant(Long id) {
-        try {
+        Optional<Plant> plant = plantRepository.findById(id);
+        if (plant.isPresent()) {
             plantRepository.deleteById(id);
-        } catch (Exception e) {
-            System.out.println("Plant not found");
+        } else {
+            throw new EntityNotFoundException(Plant.class, id);
         }
     }
 
     @Override
     public List<Plant> getPlants() {
         return (List<Plant>) plantRepository.findAll();
+    }
+
+    @Override
+    public boolean sellPlant(Plant plant, int quantity) {
+        if (plant.getStock() >= quantity) {
+        adjustStock(plant, -quantity);
+        plantRepository.save(plant);
+        return true;
+        }
+        return false;
+    }
+
+    public void adjustStock(Plant plant, int quantity) {
+            plant.setStock(plant.getStock() + quantity);
     }
 }

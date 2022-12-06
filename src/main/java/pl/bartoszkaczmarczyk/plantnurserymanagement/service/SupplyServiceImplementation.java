@@ -5,11 +5,12 @@ import org.springframework.stereotype.Service;
 import pl.bartoszkaczmarczyk.plantnurserymanagement.entity.Plant;
 import pl.bartoszkaczmarczyk.plantnurserymanagement.entity.Supplier;
 import pl.bartoszkaczmarczyk.plantnurserymanagement.entity.Supply;
+import pl.bartoszkaczmarczyk.plantnurserymanagement.exception.EntityNotFoundException;
 import pl.bartoszkaczmarczyk.plantnurserymanagement.repository.PlantRepository;
-import pl.bartoszkaczmarczyk.plantnurserymanagement.repository.SupplierRepository;
 import pl.bartoszkaczmarczyk.plantnurserymanagement.repository.SupplyRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -17,39 +18,39 @@ public class SupplyServiceImplementation implements SupplyService {
 
     SupplyRepository supplyRepository;
     PlantRepository plantRepository;
-    SupplierRepository supplierRepository;
+    PlantServiceImplementation plantServiceImplementation;
+    SupplierServiceImplementation supplierServiceImplementation;
+
 
     @Override
-    public Supply getSupply(Long plantId, Long supplierId) {
-        try {
-           supplyRepository.findByPlantIdAndSupplierId(plantId, supplierId);
-        } catch (Exception e){
-            System.out.println("Supply not found");
+    public Supply getSupply(Long id) {
+        Optional<Supply> supply = supplyRepository.findById(id);
+        if (supply.isPresent()) {
+            return supply.get();
+        } else {
+            throw new EntityNotFoundException(Supply.class);
         }
-        return null;
     }
 
     @Override
     public Supply saveSupply(Supply supply, Long plantId, Long supplierId) {
-        try {
-            Plant plant = plantRepository.findById(plantId).get();
-            supply.setPlant(plant);
-            Supplier supplier = supplierRepository.findById(supplierId).get();
-            supply.setSupplier(supplier);
-            supplyRepository.save(supply);
-        } catch (Exception e) {
-            System.out.println("Supply not found");
-        }
-        return null;
+        Plant plant = plantServiceImplementation.getPlant(plantId);
+        Supplier supplier = supplierServiceImplementation.getSupplier(supplierId);
+        supply.setPlant(plant);
+        supply.setSupplier(supplier);
+        plantServiceImplementation.adjustStock(plant, supply.getQuantity());
+        plantRepository.save(plant);
+        return supplyRepository.save(supply);
     }
 
     @Override
-    public void deleteSupply(Long id) {
-        try {
-            supplyRepository.deleteById(id);
-        } catch (Exception e) {
-            System.out.println("Supply not found");
+    public boolean deleteSupply(Supply supply) {
+        if (supply.getPlant().getStock() >= supply.getQuantity()) {
+            plantServiceImplementation.adjustStock(supply.getPlant(), -supply.getQuantity());
+            supplyRepository.deleteById(supply.getId());
+            return true;
         }
+        return false;
     }
 
     @Override

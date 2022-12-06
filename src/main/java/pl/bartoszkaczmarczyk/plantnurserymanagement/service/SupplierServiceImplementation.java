@@ -3,9 +3,11 @@ package pl.bartoszkaczmarczyk.plantnurserymanagement.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.bartoszkaczmarczyk.plantnurserymanagement.entity.Supplier;
+import pl.bartoszkaczmarczyk.plantnurserymanagement.exception.EntityNotFoundException;
 import pl.bartoszkaczmarczyk.plantnurserymanagement.repository.SupplierRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -15,12 +17,12 @@ public class SupplierServiceImplementation implements SupplierService {
 
     @Override
     public Supplier getSupplier(Long id) {
-        try {
-            return supplierRepository.findById(id).get();
-        } catch (Exception e) {
-            System.out.println("Supplier not found");
+        Optional<Supplier> supplier = supplierRepository.findById(id);
+        if (supplier.isPresent()) {
+            return supplier.get();
+        } else {
+            throw new EntityNotFoundException(Supplier.class, id);
         }
-        return null;
     }
 
     @Override
@@ -30,10 +32,11 @@ public class SupplierServiceImplementation implements SupplierService {
 
     @Override
     public void deleteSupplier(Long id) {
-        try {
+        Optional<Supplier> supplier = supplierRepository.findById(id);
+        if (supplier.isPresent()) {
             supplierRepository.deleteById(id);
-        } catch (Exception e) {
-            System.out.println("Supplier not found");
+        } else {
+            throw new EntityNotFoundException(Supplier.class, id);
         }
     }
 
