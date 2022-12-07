@@ -26,4 +26,8 @@ public class Supplier {
     @JsonIgnore
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
     private List<Supply> supplies;
+
+    public Supplier(String name) {
+        this.name = name;
+    }
 }
