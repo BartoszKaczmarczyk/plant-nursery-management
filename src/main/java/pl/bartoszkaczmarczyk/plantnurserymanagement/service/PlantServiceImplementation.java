@@ -1,8 +1,6 @@
 package pl.bartoszkaczmarczyk.plantnurserymanagement.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.bartoszkaczmarczyk.plantnurserymanagement.entity.Plant;
 import pl.bartoszkaczmarczyk.plantnurserymanagement.exception.EntityNotFoundException;
@@ -15,10 +13,6 @@ import java.util.Optional;
 @Service
 public class PlantServiceImplementation implements PlantService {
 
-//    @Bean
-//    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
 
     PlantRepository plantRepository;
 

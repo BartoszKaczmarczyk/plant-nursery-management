@@ -2,6 +2,8 @@ package pl.bartoszkaczmarczyk.plantnurserymanagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
